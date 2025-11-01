@@ -1,0 +1,131 @@
+=Requirements=
+This documentation is only based on a fresh minimal installation of Debian 13.
+
+=System installation=
+* Update the aptitude cache<br /><syntaxhighlight lang="bash">apt update</syntaxhighlight>
+* Install Apache2 and PHP<br /><syntaxhighlight lang="bash">apt install -y apache2 libapache2-mod-php8.4 \
+    php8.4-bz2 php8.4-curl php8.4-gd php8.4-intl php8.4-mbstring \
+    php8.4-mysql php8.4-tidy php8.4-xml php8.4-zip</syntaxhighlight>
+* Install MariaDB<br /><syntaxhighlight lang="bash">apt install -y mariadb-server mariadb-client</syntaxhighlight>
+* Install Java<br /><syntaxhighlight lang="bash">apt install -y openjdk-21-jre-headless</syntaxhighlight>
+* Install some needed other tools<br /><syntaxhighlight lang="bash">apt install -y sudo python3 imagemagick ghostscript poppler-utils</syntaxhighlight>
+
+=Configure Apache2 virtual host=
+* Delete existing sample configuration<br /><syntaxhighlight lang="bash">rm /etc/apache2/sites-enable/000-default.conf</syntaxhighlight>
+* Create BlueSpice configuration<br /><syntaxhighlight lang="bash">vi /etc/apache2/sites-available/bluespice.conf</syntaxhighlight>
+* Copy and paste [https://en.wiki4.bluespice.com/w/nsfr_img_auth.php/3004/b/bb/apache_vhost_bluespice_free.txt the configuration you can find on the related page], configure related parts to match your system and save the file
+* Enable the new vHost<br /><syntaxhighlight lang="bash">a2ensite bluespice</syntaxhighlight>
+* Enable the rewrite module<br /><syntaxhighlight lang="bash">a2enmod rewrite</syntaxhighlight>
+* Restart the apache2 webserver<br /><syntaxhighlight lang="bash">systemctl restart apache2</syntaxhighlight>
+
+=Download resources=
+* Just download the sources from github<br /><syntaxhighlight lang="bash">cd /root
+git clone --branch=5.1.3 https://github.com/freesoft-official/bluespice-free.git</syntaxhighlight>
+
+=Extract resources=
+* Extract the downloaded sources<br /><syntaxhighlight lang="bash">cd /root/bluespice-free
+tar xzf bluespice-free-resources-<VERSION>.tar.gz</syntaxhighlight>
+
+=Define some random passwords temporarly=
+* For the installation process just create some randomly passwords and define it as environment variables<br /><b>These are example passwords! Please replace it by yourself!</b><br /><syntaxhighlight lang="bash">export PWD_DB=DtSQHvxSXCwrmb7Yuh6hRyq2 # for the later needed BlueSpice database user
+export PWD_OS=ktGN5LNLB47UZtYdyKxU5HbF # initial password for the OpenSearch installation</syntaxhighlight>
+* Document your passwords for purposes if you need it later
+
+=Install Html2PDF=
+* Move Html2PDF app to /opt<br /><syntaxhighlight lang="bash">mv /root/bluespice-free/bluespice-free-resources/html2pdf /opt</syntaxhighlight>
+* Run the Html2PDF service<br /><syntaxhighlight lang="bash">/usr/bin/java -jar /opt/html2pdf/html2pdf.jar</syntaxhighlight>
+* Check at your browser if it works: http://<IP-or-hostname-of-your-server>:8080/Html2PDF/v1<br />[[File:Html2PDF_service_running.png]]
+* Interrupt the service at the console by pressing Ctrl+C
+* Open a new text file to create a system service<br /><syntaxhighlight lang="bash">vi /etc/systemd/system/html2pdf.service</syntaxhighlight>Copy & paste the folling content into it<br /><syntaxhighlight lang="bash">[Unit]
+Description=Html2PDF for BlueSpice
+After=network.target
+  
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/java -jar /opt/html2pdf/html2pdf.jar
+  
+[Install]
+WantedBy=multi-user.target</syntaxhighlight>
+* Save and leave this file
+* Reload daemon configuration<br /><syntaxhighlight lang="bash">systemctl daemon-reload</syntaxhighlight>
+* Start service<br /><syntaxhighlight lang="bash">systemctl start html2pdf</syntaxhighlight>
+* Check at your browser if it works: http://<IP-or-hostname-of-your-server>:8080/Html2PDF/v1
+* Stop service<br /><syntaxhighlight lang="bash">systemctl stop html2pdf</syntaxhighlight>
+* Enable service<br /><syntaxhighlight lang="bash">systemctl enable html2pdf</syntaxhighlight>
+* Start service<br /><syntaxhighlight lang="bash">systemctl start html2pdf</syntaxhighlight>
+* Check at your browser if it works: http://<IP-or-hostname-of-your-server>:8080/Html2PDF/v1
+
+=Install OpenSearch=
+* Install needed tools<br /><syntaxhighlight lang="bash">apt -y install lsb-release ca-certificates curl gnupg2</syntaxhighlight>
+* Add OpenSearch public key to your keyring<br /><syntaxhighlight lang="bash">curl -fsSL https://artifacts.opensearch.org/publickeys/opensearch-release.pgp | \
+    gpg --dearmor -o /etc/apt/keyrings/opensearch.gpg</syntaxhighlight>
+* Add OpenSearch sources to your aptitude repository<br /><syntaxhighlight lang="bash">echo "deb [signed-by=/etc/apt/keyrings/opensearch.gpg] https://artifacts.opensearch.org/releases/bundle/opensearch/3.x/apt stable main" | \
+    tee /etc/apt/sources.list.d/opensearch-3.x.list</syntaxhighlight>
+* Update the aptitude cache<br /><syntaxhighlight lang="bash">apt update</syntaxhighlight>
+* Install OpenSearch<br /><syntaxhighlight lang="bash">env OPENSEARCH_INITIAL_ADMIN_PASSWORD=$PWD_OS apt install -y opensearch</syntaxhighlight>
+* Remove the plugin opensearch-security<br /><syntaxhighlight lang="bash">rm -rf /usr/share/opensearch/plugins/opensearch-security</syntaxhighlight>
+* Comment or delete all <i>plugins.security.*</i> entries at /etc/opensearch/opensearch.yml<br />[[File:Comment_OS_security_plugin.png]]
+* Reload daemon configuration<br /><syntaxhighlight lang="bash">systemctl daemon-reload</syntaxhighlight>
+* Enable service<br /><syntaxhighlight lang="bash">systemctl enable opensearch</syntaxhighlight>
+* Start service<br /><syntaxhighlight lang="bash">systemctl start opensearch</syntaxhighlight>
+* Install plugin ingest-attachment<br /><syntaxhighlight lang="bash">/usr/share/opensearch/bin/opensearch-plugin install -b ingest-attachment</syntaxhighlight>
+* Restart service<br /><syntaxhighlight lang="bash">systemctl restart opensearch</syntaxhighlight>
+* Check the service<br /><syntaxhighlight lang="bash">curl -X GET http://localhost:9200</syntaxhighlight>
+<b><span style="color:red">Please note</span> </b>
+If your OpenSearch installation will be updated to a newer version caused by a general system update or something else you have to check if the plugin opensearch-security has bin always kept deleted and commented at opensearch.yml and you have to reinstall ingest-attachment<br /><syntaxhighlight lang="bash">/usr/share/opensearch/bin/opensearch-plugin remove ingest-attachment
+/usr/share/opensearch/bin/opensearch-plugin install -b ingest-attachment</syntaxhighlight>
+
+=Optional: Secure system with iptables firewall=
+It is recommended to secure system services needed only by internal communication by closing their ports using iptables. Be careful at this point and do this steps only if you know what you are doing. The following steps are not commented at this documentation and maybe you have to change attributes regarding to your own system.<syntaxhighlight lang="bash">apt install -y iptables</syntaxhighlight>
+
+<syntaxhighlight lang="bash">iptables -i enp0s3 -A INPUT -p icmp -j ACCEPT \
+iptables -i enp0s3 -A INPUT -p tcp --dport 22 -j ACCEPT \
+iptables -i enp0s3 -A INPUT -p tcp --dport 80 -j ACCEPT \
+iptables -i enp0s3 -A INPUT -p tcp --dport 443 -j ACCEPT \
+iptables -i lo -A INPUT -j ACCEPT \
+iptables -A OUTPUT -j ACCEPT \
+iptables -A INPUT -j DROP</syntaxhighlight>
+<syntaxhighlight lang="bash">apt install -y iptables-persistent</syntaxhighlight>
+
+=Installation of MediaWiki=
+The first step will be the installation MediaWiki based on the first release version of the LTS version BlueSpice is based on. At the moment it is 1.43.0 which is also bundled at your bluespice-free-resources you already downloaded.
+* The first step is to create a database user for the BlueSpice database. We will use the password $PWD_DB (see above).<br /><syntaxhighlight lang="bash">mysql -e "GRANT ALL ON bluespice.* TO 'bluespice'@'127.0.0.1' IDENTIFIED BY '$PWD_DB';"</syntaxhighlight>
+* Create the BlueSpice WWW directory which was configured at apache2 (DocumentRoot) and copy the source of mediawiki into it<br /><syntaxhighlight lang="bash">mkdir -p /var/www/bluespice \
+cp -a /root/bluespice-free/bluespice-free-resources/mediawiki/ /var/www/bluespice/w</syntaxhighlight>
+* Start the BlueSpice installation at your browser opening http://<IP-or-hostname-of-your-server>/w and follow all standard steps using default values. The configuration will be done later by the BlueSpice standards.
+* Now the download of the file LocalSettings.php will start. Copy it to the server and place it into /var/www/bluespice/w.
+* In your browser click on "enter your wiki"<br />[[File:BS_installation_01.png|800px|center|border|BS_installation_01.png]]<br />[[File:BS_installation_02.png|800px|center|border|BS_installation_02.png]]<br />[[File:BS_installation_03.png|800px|center|border|BS_installation_03.png]]<br />[[File:BS_installation_04.png|800px|center|border|BS_installation_04.png]]<br />[[File:BS_installation_05.png|800px|center|border|BS_installation_05.png]]<br />[[File:BS_installation_06.png|800px|center|border|BS_installation_06.png]]<br />[[File:BS_installation_07.png|800px|center|border|BS_installation_07.png]]<br />[[File:BS_installation_08.png|800px|center|border|BS_installation_08.png]]<br />[[File:BS_installation_09.png|800px|center|border|BS_installation_09.png]]
+* Welcome to your MediaWiki base installation!<br />[[File:MediaWiki_base_installation.png|800px|center|border|MediaWiki_base_installation.png]]
+
+=Installation of BlueSpice=
+* Replace the MediaWiki source with the BlueSpice source which contains the bundled version of MediaWiki and Bluespice. You already downloaded it.<br /><syntaxhighlight lang="bash">cp -a /root/bluespice-free/bluespice-free-resources/bluespice/w/ /var/www/bluespice/</syntaxhighlight>
+* Open the file LocalSettings.php for editing<br /><syntaxhighlight lang="bash">vi /var/www/bluespice/w/LocalSettings.php</syntaxhighlight>
+* Add BlueSpice at the end of the file<br /><syntaxhighlight lang="php">vi /var/www/bluespice/w/LocalSettings.php</syntaxhighlight>
+* Save and close the file
+* Open a new file called LocalSettings.local.php for editing<br /><syntaxhighlight lang="bash">vi /var/www/bluespice/w/LocalSettings.local.php</syntaxhighlight>
+* Add the following content<br /><syntaxhighlight lang="php"><?php
+
+$GLOBALS['wgArticlePath'] = "/wiki/$1";
+$GLOBALS['wgUploadPath'] = $GLOBALS['wgScriptPath'] . "/img_auth.php";
+$GLOBALS['bsgESBackendTransport'] = "http";
+$GLOBALS['wgEnableUploads'] = true;
+$GLOBALS['wgUseImageMagick'] = true;
+$GLOBALS['wgImageMagickConvertCommand'] = "/usr/bin/convert";</syntaxhighlight>
+* Save and close the file
+* Change some file permissions<br /><syntaxhighlight lang="bash">chown -R www-data:www-data /var/www/bluespice
+find /var/www/bluespice -type d -exec chmod 0755 {} \;
+find /var/www/bluespice -type f -exec chmod 0644 {} \;
+find /var/www/bluespice/w/extensions -iname 'create_pygmentize_bundle' -type f -exec chmod +x {} \;
+find /var/www/bluespice/w/extensions -iname 'pygmentize' -type f -exec chmod +x {} \;
+find /var/www/bluespice/w/extensions -name 'lua' -type f -exec chmod +x {} \;
+</syntaxhighlight>
+* Run the installation of the BlueSpice extensions<br /><syntaxhighlight lang="bash">php /var/www/bluespice/w/maintenance/run.php /var/www/bluespice/w/maintenance/update.php --quick</syntaxhighlight>
+* Initialize OpenSearch and build the index<br /><syntaxhighlight lang="bash">php /var/www/bluespice/w/maintenance/run.php /var/www/bluespice/w/extensions/BlueSpiceExtendedSearch/maintenance/initBackends.php --quick
+php /var/www/bluespice/w/maintenance/run.php /var/www/bluespice/w/extensions/BlueSpiceExtendedSearch/maintenance/rebuildIndex.php --quick</syntaxhighlight>
+* Run the runJobs.php maintenance script to update the search engine<br /><syntaxhighlight lang="bash">php /var/www/bluespice/w/maintenance/run.php /var/www/bluespice/w/maintenance/runJobs.php</syntaxhighlight>
+* Open your cronjob system configuration<br /><syntaxhighlight lang="bash">crontab -e</syntaxhighlight>
+* At the end add a line for the runJobs.php<br /><syntaxhighlight lang="bash">*/10 * * * * sudo -u www-data -g www-data php /var/www/bluespice/w/maintenance/run.php /var/www/bluespice/w/maintenance/runJobs.php</syntaxhighlight>
+* Save and leave this file
+* Open your browser and go to http://<IP-or-hostname-of-your-server>
+* Welcome to your BlueSpice installation!<br />[[File:BlueSpice_installation.png|800px|center|border|BlueSpice_installation.png]]
