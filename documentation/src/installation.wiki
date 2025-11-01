@@ -101,7 +101,7 @@ cp -a /root/bluespice-free/bluespice-free-resources/mediawiki/ /var/www/bluespic
 =Installation of BlueSpice=
 * Replace the MediaWiki source with the BlueSpice source which contains the bundled version of MediaWiki and Bluespice. You already downloaded it.<br /><syntaxhighlight lang="bash">cp -a /root/bluespice-free/bluespice-free-resources/bluespice/w/ /var/www/bluespice/</syntaxhighlight>
 * Open the file LocalSettings.php for editing<br /><syntaxhighlight lang="bash">vi /var/www/bluespice/w/LocalSettings.php</syntaxhighlight>
-* Add BlueSpice at the end of the file<br /><syntaxhighlight lang="php">vi /var/www/bluespice/w/LocalSettings.php</syntaxhighlight>
+* Add BlueSpice at the end of the file<br /><syntaxhighlight lang="php">require_once "$IP/LocalSettings.Bluespice.php";</syntaxhighlight>
 * Save and close the file
 * Open a new file called LocalSettings.local.php for editing<br /><syntaxhighlight lang="bash">vi /var/www/bluespice/w/LocalSettings.local.php</syntaxhighlight>
 * Add the following content<br /><syntaxhighlight lang="php"><?php
@@ -129,3 +129,5 @@ php /var/www/bluespice/w/maintenance/run.php /var/www/bluespice/w/extensions/Blu
 * Save and leave this file
 * Open your browser and go to http://<IP-or-hostname-of-your-server>
 * Welcome to your BlueSpice installation!<br />[[File:BlueSpice_installation.png|800px|center|border|BlueSpice_installation.png]]
+
+__HIDETITLE__
