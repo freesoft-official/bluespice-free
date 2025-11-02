@@ -22,10 +22,6 @@ This documentation is only based on a fresh minimal installation of Debian 13.
 * Just download the sources from github<br /><syntaxhighlight lang="bash">cd /root
 git clone --branch=5.1.3 https://github.com/freesoft-official/bluespice-free.git</syntaxhighlight>
 
-=Extract resources=
-* Extract the downloaded sources<br /><syntaxhighlight lang="bash">cd /root/bluespice-free
-tar xzf bluespice-free-resources-<VERSION>.tar.gz</syntaxhighlight>
-
 =Define some random passwords temporarly=
 * For the installation process just create some randomly passwords and define it as environment variables<br /><b>These are example passwords! Please replace it by yourself!</b><br /><syntaxhighlight lang="bash">export PWD_DB=DtSQHvxSXCwrmb7Yuh6hRyq2 # for the later needed BlueSpice database user
 export PWD_OS=ktGN5LNLB47UZtYdyKxU5HbF # initial password for the OpenSearch installation</syntaxhighlight>

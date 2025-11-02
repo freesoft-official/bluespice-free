@@ -1,0 +1,35 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kghbln",
+			"Metalhead64",
+			"Tobi 406",
+			"WikiBayer",
+			"Brettchenweber",
+			"Vanyar"
+		]
+	},
+	"timeless-prefs-talkpage": "[[mw:Skin talk:Timeless|{{int:talk}}]]",
+	"timeless-desc": "Stellt eine zeitlose Benutzeroberfläche bereit, die auf dem \"Winter\"-Prototyp von Brandon Harris und verschiedenen Stilen von Wikimedia Foundation basiert.",
+	"timeless-anonymous": "Anonym",
+	"timeless-loggedinas": "Angemeldet als '''$1'''",
+	"timeless-notloggedin": "Nicht angemeldet",
+	"timeless-userpage": "{{GENDER:$1|Benutzerseite}}",
+	"timeless-talkpage": "{{GENDER:$1|Benutzerdiskussion}}",
+	"timeless-pagelog": "Seitenlogbücher",
+	"timeless-more": "Mehr",
+	"timeless-sitetools": "Wikiwerkzeuge",
+	"timeless-pageactions": "Seitenwerkzeuge",
+	"timeless-userpagetools": "Benutzerseitenwerkzeuge",
+	"timeless-action-addsection": "Neues Thema",
+	"timeless-view-view": "Lesen",
+	"timeless-pagemisc": "Mehr",
+	"timeless-namespaces": "Namensräume",
+	"timeless-pagetools": "Seitenaktionen",
+	"timeless-languages": "Sprachen",
+	"timeless-projects": "Weitere Projekte",
+	"timeless.css": "/* Jedes CSS hier wird für alle Benutzer des Timeless-Skins geladen */",
+	"timeless.js": "/* Jedes JavaScript hier wird für alle Benutzer des Timeless-Skins geladen */",
+	"timeless-view-history": "Versionsgeschichte",
+	"timeless-action-undelete": "{{PLURAL:$1|1 Version|$1 Versionen}} wiederherstellen"
+}
