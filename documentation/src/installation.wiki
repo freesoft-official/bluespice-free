@@ -28,7 +28,7 @@ export PWD_OS=ktGN5LNLB47UZtYdyKxU5HbF # initial password for the OpenSearch ins
 * Document your passwords for purposes if you need it later
 
 =Install Html2PDF=
-* Move Html2PDF app to /opt<br /><syntaxhighlight lang="bash">mv /root/bluespice-free/bluespice-free-resources/html2pdf /opt</syntaxhighlight>
+* Move Html2PDF app to /opt<br /><syntaxhighlight lang="bash">mv /root/bluespice-free/resources/html2pdf /opt</syntaxhighlight>
 * Run the Html2PDF service<br /><syntaxhighlight lang="bash">/usr/bin/java -jar /opt/html2pdf/html2pdf.jar</syntaxhighlight>
 * Check at your browser if it works: http://<IP-or-hostname-of-your-server>:8080/Html2PDF/v1<br />[[File:Html2PDF_service_running.png]]
 * Interrupt the service at the console by pressing Ctrl+C
@@ -88,14 +88,14 @@ iptables -A INPUT -j DROP</syntaxhighlight>
 The first step will be the installation MediaWiki based on the first release version of the LTS version BlueSpice is based on. At the moment it is 1.43.0 which is also bundled at your bluespice-free-resources you already downloaded.
 * The first step is to create a database user for the BlueSpice database. We will use the password $PWD_DB (see above).<br /><syntaxhighlight lang="bash">mysql -e "GRANT ALL ON bluespice.* TO 'bluespice'@'127.0.0.1' IDENTIFIED BY '$PWD_DB';"</syntaxhighlight>
 * Create the BlueSpice WWW directory which was configured at apache2 (DocumentRoot) and copy the source of mediawiki into it<br /><syntaxhighlight lang="bash">mkdir -p /var/www/bluespice \
-cp -a /root/bluespice-free/bluespice-free-resources/mediawiki/ /var/www/bluespice/w</syntaxhighlight>
+cp -a /root/bluespice-free/resources/mediawiki/ /var/www/bluespice/w</syntaxhighlight>
 * Start the BlueSpice installation at your browser opening http://<IP-or-hostname-of-your-server>/w and follow all standard steps using default values. The configuration will be done later by the BlueSpice standards.
 * Now the download of the file LocalSettings.php will start. Copy it to the server and place it into /var/www/bluespice/w.
 * In your browser click on "enter your wiki"<br />[[File:BS_installation_01.png|800px|center|border|BS_installation_01.png]]<br />[[File:BS_installation_02.png|800px|center|border|BS_installation_02.png]]<br />[[File:BS_installation_03.png|800px|center|border|BS_installation_03.png]]<br />[[File:BS_installation_04.png|800px|center|border|BS_installation_04.png]]<br />[[File:BS_installation_05.png|800px|center|border|BS_installation_05.png]]<br />[[File:BS_installation_06.png|800px|center|border|BS_installation_06.png]]<br />[[File:BS_installation_07.png|800px|center|border|BS_installation_07.png]]<br />[[File:BS_installation_08.png|800px|center|border|BS_installation_08.png]]<br />[[File:BS_installation_09.png|800px|center|border|BS_installation_09.png]]
 * Welcome to your MediaWiki base installation!<br />[[File:MediaWiki_base_installation.png|800px|center|border|MediaWiki_base_installation.png]]
 
 =Installation of BlueSpice=
-* Replace the MediaWiki source with the BlueSpice source which contains the bundled version of MediaWiki and Bluespice. You already downloaded it.<br /><syntaxhighlight lang="bash">cp -a /root/bluespice-free/bluespice-free-resources/bluespice/w/ /var/www/bluespice/</syntaxhighlight>
+* Replace the MediaWiki source with the BlueSpice source which contains the bundled version of MediaWiki and Bluespice. You already downloaded it.<br /><syntaxhighlight lang="bash">cp -a /root/bluespice-free/resources/bluespice/w/ /var/www/bluespice/</syntaxhighlight>
 * Open the file LocalSettings.php for editing<br /><syntaxhighlight lang="bash">vi /var/www/bluespice/w/LocalSettings.php</syntaxhighlight>
 * Add BlueSpice at the end of the file<br /><syntaxhighlight lang="php">require_once "$IP/LocalSettings.Bluespice.php";</syntaxhighlight>
 * Save and close the file
